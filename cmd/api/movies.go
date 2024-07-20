@@ -36,7 +36,7 @@ func (app *application) showMovieHandler(w http.ResponseWriter, r *http.Request)
 	}
 
 	// Edncode struct to JSON and send as HTTP response
-	err = app.writeJSON(w, http.StatusOK, movie, nil)
+	err = app.writeJSON(w, http.StatusOK, envelope{"movie":movie}, nil)
 	if err != nil{
 		app.logger.Println(err)
 		http.Error(w, "The server encountered a problem and could not process your request", http.StatusInternalServerError)

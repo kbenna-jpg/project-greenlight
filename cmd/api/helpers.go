@@ -26,9 +26,11 @@ func (app *application) readIDParam(r *http.Request) (int64, error) {
 
 }
 
+type envelope map[string]interface{}
+
 // Helper method which sends responses
 func (app *application) writeJSON(w http.ResponseWriter, status int, data interface{}, headers http.Header) error {
-	js, err := json.Marshal(data)
+	js, err := json.MarshalIndent(data, "", "\t") // adds whitespace to encoded JSON
 	if err != nil {
 		return err
 	}
