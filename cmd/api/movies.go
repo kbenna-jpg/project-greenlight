@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"time"
@@ -10,7 +11,26 @@ import (
 )
 
 func (app *application) createMovieHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Create a new movie")
+	// Declare anonymous struct to hold information expected to be in HTTP request body
+	var input struct {
+		Title string `json: "title"`
+		Year int32 `json: "year"`
+		Runtime int32 `json: "runtime"`
+		Genres []string `json: "genres"`
+	}
+
+		err := app.readJSON(w, r, &input)
+		if err != nil {
+			app.errorResponse(w, r, http.StatusBadRequest, err.Error())
+			return
+		}
+	// Reads from request body and Decode() method decodes body contents into input struct
+	err := json.NewDecoder(r.Body).Decode(&input) // pointer passed to input struct as target decode destination
+	if err != nil {
+		app.errorResponse(w, r, http.StatusBadRequest, err.Error())
+		return
+	}
+	fmt.Fprintf(w, "%+v\n", input)
 }
 
 // When httprouter is parsing a reuquest, ay interpolated URL params stored in request context
